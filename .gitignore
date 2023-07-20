@@ -1,0 +1,6 @@
+jars/
+build/
+.idea/
+.gradle/
+mod_info.json
+richodemus-blueprintresearch.version

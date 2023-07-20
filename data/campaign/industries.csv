@@ -1,0 +1,2 @@
+id,name,cost mult,build time,income,upkeep,downgrade,upgrade,tags,data,image,plugin,desc,order,disruptDanger
+BLUEPRINTRESEARCH_RESEARCHFACILITY,Research Facility,1,1,,8,,,structure,,graphics/icons/industry/researchfacility.png,com.richodemus.starsector.blueprintresearch.ResearchFacility,"cool desc",
