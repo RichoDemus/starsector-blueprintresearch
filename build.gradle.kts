@@ -5,20 +5,20 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 object Variables {
     val starsectorDirectory = "A:/Games/Starsector"
-    val modVersion = "0.0.1"
+    val modVersion = "0.0.2"
     val jarFileName = "BlueprintResearch.jar"
 
     val modId = "richodemus-blueprintresearch"
     val modName = "Blueprint Research"
     val author = "RichoDemus"
-    val description = "desc"
+    val description = "A large and well funged facility staffed with bright minds tasked with inventing and reverse engineering blueprints"
     val gameVersion = "0.96a-RC10"
     val jars = arrayOf("jars/$jarFileName")
     val modPlugin = "com.richodemus.starsector.blueprintresearch.LifecyclePlugin"
     val isUtilityMod = false
     val masterVersionFile = "https://raw.githubusercontent.com/richodemus/starsector-BlueprintResearch/master/$modId.version"
     val modThreadId = "21140"
-    val modDirectDownloadUrl = "https://github.com/richodemus/starsector-BlueprintResearch/releases/download/0.0.1/BlueprintResearch-0.0.1.zip"
+    val modDirectDownloadUrl = "https://github.com/richodemus/starsector-BlueprintResearch/releases/download/0.0.2/BlueprintResearch-0.0.2.zip"
 }
 // Scroll down and change the "dependencies" part of mod_info.json, if needed
 // LazyLib is needed to use Kotlin, as it provides the Kotlin Runtime
