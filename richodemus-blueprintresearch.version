@@ -2,12 +2,12 @@
 {
     "masterVersionFile":"https://raw.githubusercontent.com/richodemus/starsector-BlueprintResearch/master/richodemus-blueprintresearch.version",
     "modName":"Blueprint Research",
-    "modThreadId":21140,
-    "directDownloadURL": "https://github.com/richodemus/starsector-BlueprintResearch/releases/download/0.0.2/BlueprintResearch-0.0.2.zip",
+    "modThreadId":27628.0,
+    "directDownloadURL": "https://github.com/richodemus/starsector-BlueprintResearch/releases/download/0.0.3/BlueprintResearch-0.0.3.zip",
     "modVersion":
     {
         "major":0,
         "minor":0,
-        "patch":2
+        "patch":3
     }
 }
