@@ -12,12 +12,13 @@ import com.fs.starfarer.api.impl.campaign.ids.Submarkets
 import com.fs.starfarer.api.loading.FighterWingSpecAPI
 import com.fs.starfarer.api.loading.WeaponSpecAPI
 import com.fs.starfarer.api.util.WeightedRandomPicker
+import lunalib.lunaSettings.LunaSettings
 import org.lazywizard.lazylib.ext.logging.i
 import java.util.*
 
 
 class ResearchFacility: BaseIndustry() {
-    var lastDayChecked:Int = Global.getSector().clock.day
+//    var lastDayChecked:Int = Global.getSector().clock.day
     override fun apply() {
         super.apply(true);
 
@@ -26,36 +27,56 @@ class ResearchFacility: BaseIndustry() {
         demand(Commodities.VOLATILES, 1)
     }
 
-    override fun advance(amount: Float) {
-        super.advance(amount);
-        val clock: CampaignClockAPI = Global.getSector().clock
-
-        if (lastDayChecked == clock.day) {
-            return
-        }
-
-        lastDayChecked = clock.day
-
-    }
+//    override fun advance(amount: Float) {
+//        super.advance(amount);
+//        val clock: CampaignClockAPI = Global.getSector().clock
+//
+//        if (lastDayChecked == clock.day) {
+//            return
+//        }
+//
+//        lastDayChecked = clock.day
+//
+//    }
 
     override fun generateCargoForGatheringPoint(random: Random?): CargoAPI {
+        val shipBlueprintsToAdd = if (Global.getSettings().getModManager().isModEnabled("lunalib")) {
+            LunaSettings.getInt("richodemus-blueprintresearch", "shipBluePrintsToAdd")?:1
+        } else {
+            1
+        }
+        val weaponBlueprintsToAdd = if (Global.getSettings().getModManager().isModEnabled("lunalib")) {
+            LunaSettings.getInt("richodemus-blueprintresearch", "weaponBluePrintsToAdd")?:1
+        } else {
+            1
+        }
+        val fighterBlueprintsToAdd = if (Global.getSettings().getModManager().isModEnabled("lunalib")) {
+            LunaSettings.getInt("richodemus-blueprintresearch", "fighterBluePrintsToAdd")?:1
+        } else {
+            1
+        }
+
         val ships = getShipsWithBlueprints().toMutableList()
         val knownShips = Global.getSector().playerFaction.knownShips
-        val bpsInStorage = getBlueprintsInStorage().weaponBluePrints
+        val bpsInStorage = getBlueprintsInStorage().shipBluePrints
         val unknownShips = ships.filter { !knownShips.contains(it.hullId) }.filter { !bpsInStorage.contains(it.hullId) }
         Global.getLogger(javaClass).i({ "Total ${ships.size} ships, ${knownShips.size} known, ${bpsInStorage.size} bps in storage, for a total of ${unknownShips.size} unknown ships" }, null)
         val picker = WeightedRandomPicker<ShipHullSpecAPI>(random)
         for (spec in unknownShips) {
             picker.add(spec, 1f * spec.rarity)
         }
-        val pick: ShipHullSpecAPI? = picker.pick()
         val result = Global.getFactory().createCargo(true)
-        if (pick != null) {
-            result.addSpecial(SpecialItemData(Items.SHIP_BP, pick.hullId), 1f)
+        val shipBpsToAdd = mutableListOf<String>()
+        for (i in 1..shipBlueprintsToAdd) {
+            val pick: ShipHullSpecAPI? = picker.pickAndRemove()
+            if (pick != null) {
+                shipBpsToAdd.add(pick.hullId)
+            }
         }
-
-
-        //
+        Global.getLogger(javaClass).i({ "Adding ship bps: $shipBpsToAdd" }, null)
+        for (ship in shipBpsToAdd) {
+            result.addSpecial(SpecialItemData(Items.SHIP_BP, ship), 1f)
+        }
 
         val specs = Global.getSettings().allWeaponSpecs
         val bpTags = specs.flatMap { it.tags }.filter { it.endsWith("_bp") }
@@ -70,11 +91,17 @@ class ResearchFacility: BaseIndustry() {
         for (spec in unknownWeapons) {
             picker2.add(spec, 1f * spec.rarity)
         }
-        val pick2 = picker2.pick()
-        if (pick2 != null) {
-            result.addSpecial(SpecialItemData(Items.WEAPON_BP, pick2.weaponId), 1f)
+        val wpnBpsToAdd = mutableListOf<String>()
+        for (i in 1..weaponBlueprintsToAdd) {
+            val pick2 = picker2.pickAndRemove()
+            if (pick2 != null) {
+                wpnBpsToAdd.add(pick2.weaponId)
+            }
         }
-
+        Global.getLogger(javaClass).i({ "Adding weapon bps: $wpnBpsToAdd" }, null)
+        for (wpn in wpnBpsToAdd) {
+            result.addSpecial(SpecialItemData(Items.WEAPON_BP, wpn), 1f)
+        }
 
         val fighterSpecs = Global.getSettings().allFighterWingSpecs
         val fighterBpTags = fighterSpecs.flatMap { it.tags }.filter { it.endsWith("_bp") }
@@ -89,68 +116,20 @@ class ResearchFacility: BaseIndustry() {
         for (spec in unknownfighter) {
             picker3.add(spec, 1f * spec.rarity)
         }
-        val pick3 = picker3.pick()
-        if (pick3 != null) {
-            result.addSpecial(SpecialItemData(Items.FIGHTER_BP, pick3.id), 1f)
+        val fighterBpsToAdd = mutableListOf<String>()
+        for (i in 1..fighterBlueprintsToAdd) {
+            val pick3 = picker3.pickAndRemove()
+            if (pick3 != null) {
+                fighterBpsToAdd.add(pick3.id)
+
+            }
+        }
+        Global.getLogger(javaClass).i({ "Adding fighter bps: $fighterBpsToAdd" }, null)
+        for (fighter in fighterBpsToAdd) {
+            result.addSpecial(SpecialItemData(Items.FIGHTER_BP, fighter), 1f)
         }
 
-        //
-
-
-
         return result
-//
-//
-//
-//
-//        val allShipHullSpecs = Global.getSettings().allShipHullSpecs
-//        for (allShipHullSpec in allShipHullSpecs) {
-//            Global.getLogger(javaClass).i({ "ships " + allShipHullSpec.nameWithDesignationWithDashClass+ ". tags: " + allShipHullSpec.tags }, null)
-//        }
-//
-//        val eachCount = allShipHullSpecs.flatMap { it.tags }.groupingBy { it }.eachCount()
-//        val sorted = eachCount.toSortedMap()
-//        for (mutableEntry in sorted) {
-//            Global.getLogger(javaClass).i({ mutableEntry.value.toString() + ": " + mutableEntry.key }, null)
-//        }
-//
-//        val bpTags = allShipHullSpecs.flatMap { it.tags }.filter { it.endsWith("_bp") }
-//
-//
-//        val result = Global.getFactory().createCargo(true)
-//        result.addCommodity("rare_metals", 1f)
-//        val ships = Global.getSector().getAllEmptyVariantIds()
-//
-//        val knownShips = Global.getSector().playerFaction.knownShips
-//        Global.getLogger(javaClass).i({ "ships: $knownShips" }, null)
-//
-//
-//
-//        var attemptsLeft = 10;
-//        while (attemptsLeft > 0) {
-//            attemptsLeft--
-//            try {
-//                val idWithHull = ships[random!!.nextInt(ships.size)]
-//                val id = idWithHull.substring(0, idWithHull.lastIndexOf("_Hull"))
-//                val hullSpec = Global.getSettings().getHullSpec(id)
-//                hullSpec.rarity
-//
-////                val bp = ShipBlueprintItemPlugin()
-////                bp.init(Global.getFactory().createCargoStack(CargoAPI.CargoItemType.SPECIAL, Items.SHIP_BP, result))
-////                bp.pickShip()
-//                val randomShip = ShipBlueprintItemPlugin.pickShip(bpTags.toHashSet(), random)
-//                Global.getLogger(javaClass).i({ "Creating bp for : $randomShip" }, null)
-//                if (randomShip == null) {
-//                    break
-//                }
-//                result.addSpecial(SpecialItemData(Items.SHIP_BP, randomShip), 1f)
-//                break
-//            } catch (_: Exception) {
-//
-//            }
-//        }
-//
-//        return result
     }
 
     fun getShipsWithBlueprints(): List<ShipHullSpecAPI> {
@@ -176,7 +155,6 @@ class ResearchFacility: BaseIndustry() {
         for (stack in stacks) {
             val data = stack.data //contains the nice stuff
             if (data is SpecialItemData) {
-//                Global.getLogger(javaClass).i({ "stack: " + stack.displayName + ": " + stack.size + " data" + data.data + " id: " + data.id }, null)
                 if (data.id == "ship_bp") {
                     shipBps.add(data.data)
                 } else if (data.id == "weapon_bp") {
@@ -185,16 +163,7 @@ class ResearchFacility: BaseIndustry() {
                     fighterBps.add(data.data)
                 }
             }
-            else {
-//                Global.getLogger(javaClass).i({ "stack: " + stack.displayName + ": " + stack.size + " data: " + data + ". " + data.javaClass }, null)
-            }
         }
         return Blueprints(shipBps.toHashSet(), weaponBps.toHashSet(), fighterBps.toHashSet())
     }
-
-
-
-    //    override fun createTooltip(mode: Industry.IndustryTooltipMode?, tooltip: TooltipMakerAPI?, expanded: Boolean) {
-//        tooltip.
-//    }
 }

@@ -16,9 +16,9 @@ object Variables {
     val jars = arrayOf("jars/$jarFileName")
     val modPlugin = "com.richodemus.starsector.blueprintresearch.LifecyclePlugin"
     val isUtilityMod = false
-    val masterVersionFile = "https://raw.githubusercontent.com/richodemus/BlueprintResearch/master/$modId.version"
+    val masterVersionFile = "https://raw.githubusercontent.com/richodemus/starsector-BlueprintResearch/master/$modId.version"
     val modThreadId = "21140"
-    val modDirectDownloadUrl = "https://github.com/richodemus/BlueprintResearch/releases/download/0.0.1/BlueprintResearch-0.0.1.zip"
+    val modDirectDownloadUrl = "https://github.com/richodemus/starsector-BlueprintResearch/releases/download/0.0.1/BlueprintResearch-0.0.1.zip"
 }
 // Scroll down and change the "dependencies" part of mod_info.json, if needed
 // LazyLib is needed to use Kotlin, as it provides the Kotlin Runtime
@@ -48,6 +48,7 @@ dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersionInLazyLib")
 
     compileOnly(fileTree("$starsectorModDirectory/LazyLib/jars") { include("*.jar") })
+    compileOnly(fileTree("$starsectorModDirectory/LunaLib/jars") { include("*.jar") })
     //compileOnly(fileTree("$starsectorModDirectory/Console Commands/jars") { include("*.jar") })
 
     // This grabs local files from the /libs folder, see `repositories` block.
@@ -124,6 +125,10 @@ tasks {
                                 "id": "lw_lazylib",
                                 "name": "LazyLib",
                                 # "version": "2.6" # If a specific version or higher is required, include this line
+                            },
+                            {
+                                "id": "lunalib",
+                                "name": "LunaLib",
                             }
                         ]
                     }

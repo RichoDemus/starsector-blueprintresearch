@@ -14,12 +14,14 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       # Checks-out repository under $GITHUB_WORKSPACE, so your job can access it
       # GitHub Actions by default doesn't check out tags, so make sure those are included
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         
       - name: Fetch Tags
         run: git fetch --prune --unshallow --tags
@@ -36,12 +38,13 @@ jobs:
           ./runner.sh
           
       - name: Publish Release on GitHub
-        uses: "ncipollo/release-action@v1"
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          name: ${{ env.VERSION }}
-          tag: ${{ env.VERSION }}
-          bodyFile: changes.txt
-          draft: false
-          prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: ".github/workflows/artifacts/*"
+#          name: ${{ env.VERSION }}
+#          tag: ${{ env.VERSION }}
+#          bodyFile: changes.txt
+#          draft: false
+#          prerelease: false
+#          token: ${{ secrets.GITHUB_TOKEN }}
+          files: ".github/workflows/artifacts/*"

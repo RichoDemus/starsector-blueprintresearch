@@ -1,0 +1,5 @@
+fieldID,fieldName,fieldType,defaultValue,secondaryValue,fieldDescription,minValue,maxValue,tab
+luna_settingsHeader,General Header,Header,General,,,,,
+shipBluePrintsToAdd,Ship Blueprints per month,Int,1,,How many ship blueprints will be found at the end of each month,0,20,
+weaponBluePrintsToAdd,Weapon Blueprints per month,Int,1,,How many weapon blueprints will be found at the end of each month,0,20,
+fighterBluePrintsToAdd,Fighter Blueprints per month,Int,1,,How many fighter blueprints will be found at the end of each month,0,20,
